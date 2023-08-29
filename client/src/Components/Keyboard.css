@@ -1,0 +1,43 @@
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 20px;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    gap: 5px;
+}
+
+.key.key-black {
+    padding: 9px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background-color: #787c7e;
+    color: white;
+}
+
+.key.key-yellow {
+    padding: 9px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background-color: #c9b458;
+    color: white;
+}
+
+.key.key-green {
+    padding: 9px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background-color: #6aaa64;
+    color: white;
+}
+
+.key {
+    padding: 9px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background-color: #d3d6da;
+}
