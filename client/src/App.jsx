@@ -4,6 +4,7 @@ import Grid from './Components/Grid'
 import Keyboard from './Components/Keyboard'
 import Header from './Components/Header'
 import axios from 'axios';
+import Modal from './Components/Modal'
 
 function App() {
 
@@ -20,7 +21,9 @@ function App() {
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
     const [mysteryWord, setMysteryWord] = useState("")
     const [isGameWon, setIsGameWon] = useState(false)
-    const [keyColors, setKeyColors] = useState([[],[],[]]); //  , black, yellow, green
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [message, setMessage] = useState("")
+    const [keyColors, setKeyColors] = useState([[], [], []]); //  , black, yellow, green
     const [cellColors, setCellColors] = useState(
         [
             ['', '', '', '', ''],
@@ -39,7 +42,7 @@ function App() {
             const word = response.data;
             setMysteryWord(word[0]);
         } catch (error) {
-            console.log("Fetching mystery word error: ",error);
+            console.log("Fetching mystery word error: ", error);
         }
     }
 
@@ -47,12 +50,20 @@ function App() {
         getMysteryWord();
     }, [])
 
+    useEffect(()=>{
+        if(isGameWon===false && currentWordIndex>5){
+            setMessage(`Game lost. Word: ${mysteryWord}`)
+            setIsModalOpen(true);
+
+        }
+    },[isGameWon, currentWordIndex])
+
     const handleKeyPress = async (key) => {
-        if(isGameWon) return
+        if (isGameWon) return
 
         const newGridData = [...gridData];
         // console.log("newGridData: ",newGridData);
-        if(currentWordIndex>5) return;
+        if (currentWordIndex > 5) return;
 
         if (key === "Delete") {
             // in the current word, delete the last input
@@ -72,7 +83,9 @@ function App() {
         else if (key === "Enter") {
             // Check if the current word doesn't have 5 letters
             if (newGridData[currentWordIndex][5] !== 5) {
-                alert("Not enough letters")
+                // alert("Not enough letters")
+                setMessage("Not enough letters")
+                setIsModalOpen(true);
                 return;
             }
             const currentWord = newGridData[currentWordIndex].join("").slice(0, -1)
@@ -84,41 +97,45 @@ function App() {
                     const meaning = await response.json();
                     return Array.isArray(meaning);
                 } catch (error) {
-                    console.log("Fethcing dictionary word error: ",error)
+                    console.log("Fethcing dictionary word error: ", error)
                 }
             }
             const isFound = await fetchDictionary();
             // console.log("Word found", isFound);
-            if(!isFound){
-                newGridData[currentWordIndex] = ['','','','','',0];
-                alert("Not in word list")
+            if (!isFound) {
+                newGridData[currentWordIndex] = ['', '', '', '', '', 0];
+                // alert("Not in word list")
+                setMessage("Not in word list")
+                setIsModalOpen(true);
             }
             // if the word is found
-            else{
-                if(mysteryWord===currentWord){
+            else {
+                if (mysteryWord === currentWord) {
                     setIsGameWon(true);
-                    alert("Game won")
+                    // alert("Game won")
+                    setMessage("Congratulations 🎉")
+                    setIsModalOpen(true);
                 }
                 // change the current word
-                setCurrentWordIndex(currentWordIndex+1);
+                setCurrentWordIndex(currentWordIndex + 1);
 
-                console.log(mysteryWord, currentWord);
+                // console.log(mysteryWord, currentWord);
                 const newKeyColors = [...keyColors];
 
                 // update green keys
-                for(let i=0;i<5;i++){
-                    if(mysteryWord[i]===currentWord[i]){
+                for (let i = 0; i < 5; i++) {
+                    if (mysteryWord[i] === currentWord[i]) {
                         newKeyColors[2].push(currentWord[i])
                     }
                 }
                 // update yellow keys and black keys
-                for(let i=0;i<5;i++){
+                for (let i = 0; i < 5; i++) {
                     // if any letter is not found in the mystery word then insert in black array
-                    if(mysteryWord.search(currentWord[i])==-1){
+                    if (mysteryWord.search(currentWord[i]) == -1) {
                         newKeyColors[0].push(currentWord[i])
                     }
                     // if any letter is found in the mystery word then insert in yellow array
-                    else{
+                    else {
                         newKeyColors[1].push(currentWord[i])
                     }
                 }
@@ -127,13 +144,13 @@ function App() {
                 const newCellColors = [...cellColors]
                 for (let i = 0; i < currentWord.length; i++) {
                     if (mysteryWord.includes(currentWord[i])) {
-                        newCellColors[currentWordIndex][i]="cell-yellow";
+                        newCellColors[currentWordIndex][i] = "cell-yellow";
                     }
                     else {
-                        newCellColors[currentWordIndex][i]="cell-black";
+                        newCellColors[currentWordIndex][i] = "cell-black";
                     }
                     if (currentWord[i] === mysteryWord[i]) {
-                        newCellColors[currentWordIndex][i]="cell-green";
+                        newCellColors[currentWordIndex][i] = "cell-green";
                     }
                 }
                 setCellColors(newCellColors);
@@ -154,8 +171,15 @@ function App() {
     return (
         <>
             <Header />
+            <hr/>
+            <Modal
+                isOpen={isModalOpen}
+                onClose={()=>setIsModalOpen(false)}
+            >
+                <p><b>{message}</b></p>
+            </Modal>
             <Grid data={gridData} cellColors={cellColors} />
-            <Keyboard onKeyPress={handleKeyPress} keyColors={keyColors}/>
+            <Keyboard onKeyPress={handleKeyPress} keyColors={keyColors} />
         </>
     )
 }
