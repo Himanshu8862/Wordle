@@ -170,7 +170,7 @@ function App() {
 
     return (
         <>
-            <Header />
+            <Header isGameWon={isGameWon} currentWordIndex={currentWordIndex} cellColors={cellColors}/>
             <hr/>
             <Modal
                 isOpen={isModalOpen}

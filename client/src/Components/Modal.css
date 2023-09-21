@@ -14,11 +14,7 @@
 .modal-close-btn {
     font-size: 0.75em;
     position: absolute;
-    top: 0.25em;
-    right: 0.25em;
+    top: 0.5em;
+    right: 0.5em;
     cursor: pointer;
-}
-
-b{
-    margin-right: 0.8rem;
 }
