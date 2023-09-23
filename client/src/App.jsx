@@ -5,6 +5,7 @@ import Keyboard from './Components/Keyboard'
 import Header from './Components/Header'
 import axios from 'axios';
 import Modal from './Components/Modal'
+import StatModal from './Components/StatModal'
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
     const [mysteryWord, setMysteryWord] = useState("")
     const [isGameWon, setIsGameWon] = useState(false)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isStatModalOpen, setIsStatModalOpen] = useState(false)
     const [message, setMessage] = useState("")
     const [keyColors, setKeyColors] = useState([[], [], []]); //  , black, yellow, green
     const [cellColors, setCellColors] = useState(
@@ -113,8 +115,7 @@ function App() {
                 if (mysteryWord === currentWord) {
                     setIsGameWon(true);
                     // alert("Game won")
-                    setMessage("Congratulations 🎉")
-                    setIsModalOpen(true);
+                    setIsStatModalOpen(true)
                 }
                 // change the current word
                 setCurrentWordIndex(currentWordIndex + 1);
@@ -172,6 +173,14 @@ function App() {
         <>
             <Header isGameWon={isGameWon} currentWordIndex={currentWordIndex} cellColors={cellColors}/>
             <hr/>
+            <Modal
+                isOpen={isStatModalOpen}
+                onClose={() => setIsStatModalOpen(false)}
+            >
+                <b>Congratulations 🎉</b>
+                <br />
+                <StatModal isGameWon={isGameWon} shareColors={cellColors} currentWordIndex={currentWordIndex}/>
+            </Modal>
             <Modal
                 isOpen={isModalOpen}
                 onClose={()=>setIsModalOpen(false)}
