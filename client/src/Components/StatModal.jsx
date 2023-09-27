@@ -17,20 +17,21 @@ const StatModal = ({ shareColors, currentWordIndex, isGameWon }) => {
         for (let j = 0; j < m; j++) {
             let cell = shareColors[i][j];
             if (cell === "cell-black")
-                snapshot[i][j] = "⬜ ";
+                snapshot[i][j] = "⬜";
             if (cell === "cell-green")
-                snapshot[i][j] = "🟩 "
+                snapshot[i][j] = "🟩"
             if (cell == "cell-yellow")
-                snapshot[i][j] = "🟨 "
+                snapshot[i][j] = "🟨"
         }
         snapshot[i] = snapshot[i].join("")
     }
 
-    const copiedText = `Wordle Custom ${isGameWon ? `${currentWordIndex}` : `X`}/6\n\n${snapshot.join("\n")}`
 
     const handleCopy = async() => {
+        const splicedSnapshot = snapshot.toSpliced(currentWordIndex)
+        const copiedText = `Wordle Custom ${isGameWon ? `${currentWordIndex}` : `X`}/6\n\n${splicedSnapshot.join("\n")}\n\nPlay unlimited Wordle at https://wordle-custom.onrender.com/`
         const result = await navigator.clipboard.writeText(copiedText);
-        // console.log(result)
+
     }
 
 
