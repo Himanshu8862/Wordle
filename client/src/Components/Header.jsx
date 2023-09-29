@@ -3,9 +3,11 @@ import './Header.css';
 import Modal from './Modal'
 import how_to_play from "../assets/how_to_play.png"
 import StatModal from './StatModal';
+import CustomModal from './CustomModal';
 
-function Header({isGameWon, cellColors, currentWordIndex}) {
+function Header({ customWordMsg, customWord, setCustomWord, handleCustomWordSumbit, isGameWon, cellColors, currentWordIndex }) {
     const [isInstructionModalOpen, setIsInstructionModalOpen] = useState(false)
+    const [isCustomModalOpen, setIsCustomModalOpen] = useState(false)
     const [isStatModalOpen, setIsStatModalOpen] = useState(false)
     return (
         <>
@@ -20,18 +22,28 @@ function Header({isGameWon, cellColors, currentWordIndex}) {
                     <p>After your submission, the color of the tiles will change as in the examples below.</p>
                     <hr />
                     <p><b>Examples</b></p>
-                    <img src={how_to_play} width={350}></img>
+                    <img src={how_to_play} width={300}></img>
                     <hr />
                     <p><b>Unlimited wordle games all day long!</b></p>
+                    <p>
+                        *Inspired by <span><a href="https://www.nytimes.com/games/wordle/index.html">NYT Wordle</a></span>
+                    </p>
                 </div>
             </Modal>
-            
+
 
             <Modal
                 isOpen={isStatModalOpen}
                 onClose={() => setIsStatModalOpen(false)}
             >
-                <StatModal isGameWon={isGameWon} shareColors={cellColors} currentWordIndex={currentWordIndex}/>
+                <StatModal isGameWon={isGameWon} shareColors={cellColors} currentWordIndex={currentWordIndex} />
+            </Modal>
+
+            <Modal
+                isOpen={isCustomModalOpen}
+                onClose={() => setIsCustomModalOpen(false)}
+            >
+                <CustomModal customWordMsg={customWordMsg} handleCustomWordSumbit={handleCustomWordSumbit} customWord={customWord} setCustomWord={setCustomWord} />
             </Modal>
 
             <div className="header">
@@ -45,6 +57,7 @@ function Header({isGameWon, cellColors, currentWordIndex}) {
                 <h1 className="heading">Wordle</h1>
                 <div className="right-icons">
                     <svg
+                        onClick={() => { setIsCustomModalOpen(true) }}
                         style={{ marginRight: 10 }}
                         className='custom' xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-wrench-adjustable-circle" viewBox="0 0 16 16">
                         <path d="M12.496 8a4.491 4.491 0 0 1-1.703 3.526L9.497 8.5l2.959-1.11c.027.2.04.403.04.61Z" />
