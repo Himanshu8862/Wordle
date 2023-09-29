@@ -1,27 +1,14 @@
 import { useState, useEffect } from 'react'
+import { useLocation, useParams} from 'react-router-dom'
 import Grid from './Grid'
 import Keyboard from './Keyboard'
 import Header from './Header'
 // import axios from 'axios';
 import Modal from './Modal'
 import StatModal from './StatModal'
-import { useParams } from 'react-router-dom';
-import CryptoJS from "crypto-js";
+import CryptoJS, { enc } from "crypto-js";
 
-function Home({secretPass, customWordMsg, customWord, setCustomWordMsg, setCustomWord, handleCustomWordSumbit}) {
-    const { id: encodedWord } = useParams();
-
-    useEffect(() => {
-        // URL-decode the encoded word
-        const decodedWord = decodeURIComponent(encodedWord);
-
-        // Decrypt the decoded word
-        const bytes = CryptoJS.AES.decrypt(decodedWord, secretPass);
-        const decryptedWord = JSON.parse(
-            bytes.toString(CryptoJS.enc.Utf8)
-        );
-        setMysteryWord(decryptedWord);
-    }, [encodedWord]);
+function Home({ secretPass, customWordMsg, customWord, setCustomWord, handleCustomWordSumbit }) {
 
     const [gridData, setGridData] = useState(
         [
@@ -92,6 +79,32 @@ function Home({secretPass, customWordMsg, customWord, setCustomWordMsg, setCusto
     // useEffect(() => {
     //     getMysteryWord();
     // }, [])
+
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const encodedWord = params.get("id");
+    // console.log("Encoded word from params - ",encodedWord);
+
+
+    useEffect(() => {
+        // console.log(encodedWord);
+
+        if (encodedWord) {
+
+            // Decrypt the encoded word
+            const decodedWord = decodeURIComponent(encodedWord);
+            const bytes = CryptoJS.AES.decrypt(decodedWord, secretPass);
+            const decryptedWord = JSON.parse(
+                bytes.toString(CryptoJS.enc.Utf8)
+            );
+
+            // -----
+            // console.log(`Home.jsx : Found the word in URL - ${decryptedWord}`);
+
+            // Set the custom word
+            setMysteryWord(decryptedWord);
+        }
+    }, [location]);
 
     useEffect(() => {
         if (isGameWon === false && currentWordIndex > 5) {

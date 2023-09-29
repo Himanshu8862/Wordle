@@ -13,7 +13,7 @@ function App() {
     const secretPass = "XkhZG4fW2t2W";
 
     const handleCustomWordSumbit = async () => {
-        console.log(customWord)
+        // console.log(customWord)
 
         if (customWord.length !== 5) {
             setCustomWordMsg("Please enter a 5 letter word only")
@@ -39,7 +39,7 @@ function App() {
             const encodedCustomWord = encodeURIComponent(encryptedCustomWord)
 
             const sharableText = `
-                I challenge you to solve my Wordle: https://wordle-custom.onrender.com/${encodedCustomWord}
+                I challenge you to solve my Wordle: https://wordle-custom.onrender.com/?id=${encodedCustomWord}
             `
 
             navigator.clipboard.writeText(sharableText);
@@ -49,27 +49,53 @@ function App() {
         }
     }
 
-    // Check if the URL has a valid encoded word
-    const { id: encodedWordFromURL } = useParams();
-    console.log(encodedWordFromURL);
-    const isValidEncodedWordFromURL = encodedWordFromURL && typeof encodedWordFromURL === 'string';
-
     useEffect(() => {
-        if (isValidEncodedWordFromURL) {
+
+        // Check if the URL has a valid query parameter
+        const params = new URLSearchParams(window.location.search);
+        const encodedWordFromURL = params.get('id');
+
+        if (encodedWordFromURL) {
             // Decrypt the encoded word
-            const decodedWord = decodeURIComponent(encodedWordFromURL);
-            const bytes = CryptoJS.AES.decrypt(decodedWord, secretPass);
-            const decryptedWord = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-            alert(decryptedWord);
+            const decodedWordFromURL = decodeURIComponent(encodedWordFromURL);
+            const bytes = CryptoJS.AES.decrypt(decodedWordFromURL, secretPass);
+            const decryptedWordFromURL = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
 
-            navigate(`${encodedWordFromURL}`)
+            // -----
+            // console.log(`App.jsx : Found the word in URL - ${decryptedWordFromURL}`);
 
-        } else {
-            // If no valid encoded word is present and it's not a random word URL,
-            // generate a new random word and navigate to it
-            getMysteryWord();
+        } else if (location.pathname === '/'){
+            // If no valid query parameter is present, generate a new random word
+            // -----
+            // console.log(`getting a random word`);
+            // getMysteryWord();
+
+            (async () => {
+                try {
+                    const response = await axios.get(
+                        'https://random-word-api.vercel.app/api?words=1&length=5&type=uppercase'
+                    );
+                    const word = response.data;
+
+                    const encryptedWord = CryptoJS.AES.encrypt(
+                        JSON.stringify(word[0]),
+                        secretPass
+                    ).toString();
+
+                    // URL-encode the encrypted word
+                    const encodedWord = encodeURIComponent(encryptedWord);
+
+                    // Redirect to the Home component with the encoded mysteryWord as a query parameter
+                    navigate(`/?id=${encodedWord}`, {
+                        replace: true,
+                    }); // Use replace: true to avoid adding to browser history
+                } catch (error) {
+                    console.log('Fetching mystery word error: ', error);
+                }
+            })();
+
         }
-    }, [encodedWordFromURL, isValidEncodedWordFromURL]);
+    }, [location]);
 
 
     async function getMysteryWord() {
@@ -86,7 +112,7 @@ function App() {
             const encodedWord = encodeURIComponent(encryptedWord);
 
             // Redirect to the Home component with the encoded mysteryWord
-            navigate(`/${encodedWord}`);
+            navigate(`/?id=${encodedWord}`); // Use replace: true to avoid adding to browser history
 
         } catch (error) {
             console.log("Fetching mystery word error: ", error);
@@ -96,7 +122,7 @@ function App() {
     return (
         <>
             <Routes>
-                <Route path='/:id' element={
+                <Route path='/' element={
                     <Home
                         secretPass={secretPass}
                         customWordMsg={customWordMsg}
