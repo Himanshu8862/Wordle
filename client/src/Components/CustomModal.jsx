@@ -4,11 +4,12 @@ const CustomModal = ({ customWordMsg, handleCustomWordSumbit, customWord, setCus
     return (
         <div className='custom-modal'>
             <b>MAKE CUSTOM WORDLE</b>
-            <p>Enter a word of length 5</p>
+            <p className="challenge">Challenge your friends</p>
             <input
                 className='custom-input'
                 type="text"
                 value={customWord}
+                placeholder="Enter a word of length 5"
                 onChange={(e) => setCustomWord(e.target.value.toUpperCase())}
             />
             <button onClick={handleCustomWordSumbit} className="btn copy-btn">Share custom wordle link</button>

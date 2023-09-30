@@ -45,7 +45,7 @@ function Keyboard({ onKeyPress, keyColors }) {
                             <button
                                 key={key}
                                 id={key}
-                                className={`key ${colorClass}`}
+                                className={`key ${colorClass} ${key === "Delete" || key === "Enter" ? "special" : ""}`}
                                 onClick={() => handleKeyClick(key)}
                             >
                                 {key}

@@ -1,3 +1,4 @@
+import { useState } from "react"
 import "./StatModal.css"
 
 const StatModal = ({ shareColors, currentWordIndex, isGameWon }) => {
@@ -11,6 +12,8 @@ const StatModal = ({ shareColors, currentWordIndex, isGameWon }) => {
             ['', '', '', '', ''],
             ['', '', '', '', ''],
         ]
+
+    const [copied, setCopied] = useState(false)
 
     for (let i = 0; i < shareColors.length; i++) {
         let m = shareColors[i].length
@@ -29,9 +32,12 @@ const StatModal = ({ shareColors, currentWordIndex, isGameWon }) => {
 
     const handleCopy = async() => {
         const splicedSnapshot = snapshot.toSpliced(currentWordIndex)
-        const copiedText = `Wordle Custom ${isGameWon ? `${currentWordIndex}` : `X`}/6\n\n${splicedSnapshot.join("\n")}\n\nPlay unlimited Wordle at https://wordle-custom.onrender.com/`
+        const copiedText = `Custom Wordle ${isGameWon ? `${currentWordIndex}` : `X`}/6\n\n${splicedSnapshot.join("\n")}\n\nPlay unlimited Wordle at https://wordle-custom.onrender.com/`
         const result = await navigator.clipboard.writeText(copiedText);
-
+        setCopied(true);
+        setTimeout(() => {
+            setCopied(false)
+        }, 2000);
     }
 
 
@@ -40,14 +46,14 @@ const StatModal = ({ shareColors, currentWordIndex, isGameWon }) => {
     return (
         <>
             <div id="tiles" className="tiles">
-                <b>{`Wordle Custom ${isGameWon ? `${currentWordIndex}` : `X`}/6`}</b>
+                <b>{`Custom Wordle ${isGameWon ? `${currentWordIndex}` : `X`}/6`}</b>
                 {snapshot.map(row => (
                     <p className="word-row" key={ky[k++]}>{row}</p>
                 ))}
             </div>
-            <button onClick={handleCopy} className="btn copy-btn">Copy this attempt</button>
+            <button onClick={handleCopy} className="btn copy-btn-stat">Copy this attempt</button>
             <button className="btn random-btn"><a style={{color: "white"}}href="/"> Play a random word </a></button>
-
+            <p className="copied">{copied? "Copied!" : ""}</p>
         </>
     )
 }

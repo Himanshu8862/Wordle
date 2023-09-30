@@ -38,9 +38,7 @@ function App() {
 
             const encodedCustomWord = encodeURIComponent(encryptedCustomWord)
 
-            const sharableText = `
-                I challenge you to solve my Wordle: https://wordle-custom.onrender.com/?id=${encodedCustomWord}
-            `
+            const sharableText = `I challenge you to solve my Wordle: https://wordle-custom.onrender.com/?id=${encodedCustomWord}`
 
             navigator.clipboard.writeText(sharableText);
             setCustomWordMsg("Link copied to clipboard")
@@ -96,28 +94,6 @@ function App() {
 
         }
     }, [location]);
-
-
-    async function getMysteryWord() {
-        try {
-            const response = await axios.get(`https://random-word-api.vercel.app/api?words=1&length=5&type=uppercase`);
-            const word = response.data;
-
-            const encryptedWord = CryptoJS.AES.encrypt(
-                JSON.stringify(word[0]),
-                secretPass
-            ).toString();
-
-            // URL-encode the encrypted word
-            const encodedWord = encodeURIComponent(encryptedWord);
-
-            // Redirect to the Home component with the encoded mysteryWord
-            navigate(`/?id=${encodedWord}`); // Use replace: true to avoid adding to browser history
-
-        } catch (error) {
-            console.log("Fetching mystery word error: ", error);
-        }
-    }
 
     return (
         <>

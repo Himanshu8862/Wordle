@@ -226,12 +226,15 @@ function Home({ secretPass, customWordMsg, customWord, setCustomWord, handleCust
     return (
         <>
             <Header customWordMsg={customWordMsg} customWord={customWord} setCustomWord={setCustomWord} handleCustomWordSumbit={handleCustomWordSumbit} isGameWon={isGameWon} currentWordIndex={currentWordIndex} cellColors={cellColors} />
-            <hr />
+            {/* <hr /> */}
             <Modal
                 isOpen={isStatModalOpen}
                 onClose={() => setIsStatModalOpen(false)}
             >
                 <b>Congratulations 🎉</b>
+                <br />
+                <b>You Won</b>
+                <br />
                 <br />
                 <StatModal isGameWon={isGameWon} shareColors={cellColors} currentWordIndex={currentWordIndex} />
             </Modal>

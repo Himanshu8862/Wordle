@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 5px;
-    margin-top: 20px;
+    margin-top: 8px;
     align-items: center;
 }
 
@@ -40,4 +40,14 @@
     cursor: pointer;
     font-size: 1.2rem;
     background-color: #d3d6da;
+    width: 36px;
+    border-radius: 5px;
+}
+
+.special{
+    padding: 9px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    background-color: #d3d6da;
+    width: 75px;
 }
